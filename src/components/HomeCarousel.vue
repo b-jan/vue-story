@@ -2,52 +2,47 @@
   <div class="carousel-container">
     <Carousel
       :per-page="1"
-      :value="activeSlide"
+      :value="activeStory"
       :mouse-drag="true"
       :pagination-enabled="false"
-      autoplay
       centerMode
+      @page-change="changeStory"
     >
       <Slide
-        v-for="(videoLink, index) in videoLinks"
-        :class="{'VueCarousel-slide-current': activeSlide === index}"
-        :key="index"
+        v-for="(storyData, index1) in stories"
+        :class="{'VueCarousel-slide-current': activeMedia === index1}"
+        :key="index1"
       >
-        <img
-          v-if="videoLink.type === 'image'"
-          :src="videoLink.src"
-          class="carousel-container__image"
+        <div
+          v-for="(story, index2) in storyMedia(storyData)"
+          :key="story.src"
+          class="carousel-container__media-container"
+          @click="() => goToNextMedia(index1, story.type)"
         >
-        <video
-          v-if="videoLink.type === 'video'"
-          ref="video"
-          :src="videoLink.src"
-          autoplay
-          muted
-          @timeupdate="() => goToNextSlide(index)"
-          @canplay="() => waitAndRemoveSplashScreen(index)"
-        />
+          <img
+            v-if="story.type === 'image'"
+            :src="story.src"
+            :class="{'carousel-container__image--current': index2 === activeMedia}"
+            class="carousel-container__image"
+          >
+          <video
+            v-if="story.type === 'video'"
+            ref="video"
+            :src="story.mp4"
+            autoplay
+            muted
+            @timeupdate="() => goToNextMedia(index2)"
+            :class="{'carousel-container__video--current': index2 === activeMedia}"
+            class="carousel-container__video"
+          />
+        </div>
       </Slide>
     </Carousel>
-    <div
-      v-if="hasVideoStarted"
-      class="pagination"
-    >
-      <button
-        v-for="(videoLink, index) in videoLinks"
-        :key="index"
-        :class="{'pagination__dot--current': index === activeSlide}"
-        class="pagination__dot"
-        @click="changeSlide(index)"
-      />
-    </div>
   </div>
 </template>
 
 <script>
 import { Carousel, Slide } from 'vue-carousel';
-
-const VIDEO_ENDING_OFFSET = 0.6
 
 export default {
   name: 'HomeCarousel',
@@ -56,7 +51,7 @@ export default {
     Slide
   },
   props: {
-    videoLinks: {
+    stories: {
       default: function() {
         return []
       },
@@ -65,51 +60,47 @@ export default {
   },
   data() {
     return {
-      activeSlide: 0,
+      activeStory: 0,
+      activeMedia: 0,
       hasVideoStarted: false
     }
   },
   computed: {
-    carouselLength() {
-      return this.videoLinks.length
+    storiesLength() {
+      return this.stories.map(storyData => {
+        return storyData.content.story.length
+      })
     }
   },
   methods: {
-    waitAndRemoveSplashScreen: function(index) {
-      if (index !== 0) return
-      setTimeout(() => {
-        this.hasVideoStarted = true
-        this.$emit('removeSplashScreen')
-      }, 1000) // wait 1 sec because of videos starting glitch
+    storyMedia(storyData) {
+      return storyData.content.story
     },
-    goToNextSlide: function(index) {
-      // Go to next slide only if the video is nearly completed: 0.6s (vue-carousel transition lasts 0.8s)
+    changeStory(storyNumber) {
+      this.activeStory = storyNumber
+    },
+    goToNextMedia: function(index1, type) {
+      if (type === 'image') {
+        this.activeMedia += 1
+      }
 
-      // During a page change, vue refs are removed. Leave the slide change when video refs are removed
-      if (0 === this.$refs.video.length) return
+      if (type === 'video') {
+        this.goToNextVideo()
+      }
 
-      if (
-        this.$refs.video[this.activeSlide].currentTime <
-        this.$refs.video[this.activeSlide].duration - VIDEO_ENDING_OFFSET
-      )
-        return
-      // Only listen end event for active video
-      if (this.activeSlide === index) {
-        this.activeSlide += 1
-        // On last slide, loop on first slide
-        if (this.activeSlide === this.carouselLength) {
-          this.activeSlide = 0
-        }
-        this.replayCurrentVideo()
+      // On last slide, go on next story, on first slide
+      if (this.activeMedia === this.storiesLength[index1]) {
+        this.activeMedia = 0
+        this.activeStory += 1
       }
     },
-    changeSlide: function(slideNumber) {
-      this.activeSlide = slideNumber
+    goToNextVideo: function() {
+      this.activeMedia += 1
       this.replayCurrentVideo()
     },
     replayCurrentVideo: function() {
-      this.$refs.video[this.activeSlide].currentTime = 0
-      this.$refs.video[this.activeSlide].play()
+      this.$refs.video[this.activeMedia].currentTime = 0
+      this.$refs.video[this.activeMedia].play()
     }
   }
 }
@@ -120,30 +111,31 @@ export default {
   display: flex;
   flex-direction: column;
 
-  &__image {
+  &__media-container {
     width: 100%;
     object-fit: cover;
     object-position: 75% 50%;
   }
-}
 
-.pagination {
-  align-self: center;
-  margin-top: 32px;
-
-  &__dot {
-    width: 6px;
-    height: 6px;
-    padding: 0;
-    background-color: white;
-    border-radius: 50%;
-    margin: 0 5px;
-    border: none;
-    outline: none;
-    cursor: pointer;
+  &__image {
+    width: 100%;
+    display: none;
+    object-fit: cover;
+    object-position: 75% 50%;
 
     &--current {
-      background-color: blue;
+      display: flex;
+    }
+  }
+
+  &__video {
+    width: 100%;
+    display: none;
+    object-fit: cover;
+    object-position: 75% 50%;
+
+    &--current {
+      display: flex;
     }
   }
 }
