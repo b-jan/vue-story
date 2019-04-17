@@ -10,26 +10,24 @@
     >
       <Slide
         v-for="(storyData, index) in stories"
-        :class="{'VueCarousel-slide-current': activeMediaIndex === index}"
         :key="index"
       >
         <div
+          v-if="index === activeStoryIndex"
           class="carousel-container__media-container"
-          @click="() => goToNextMedia(index, story.type)"
+          @click="() => goToNextMedia(index, activeMedia.type)"
         >
           <img
-            v-if="activeMedia && activeMedia.type === 'image'"
+            v-if="activeMedia !== undefined && activeMedia.type === 'image'"
             :src="activeMedia.src"
             class="carousel-container__image"
           >
           <video
-            v-if="activeMedia && activeMedia.type === 'video'"
+            v-if="activeMedia !== undefined && activeMedia.type === 'video'"
             :poster="activeMedia.thumbnail"
-            ref="video"
             :src="activeMedia.mp4"
             autoplay
             muted
-            @timeupdate="() => goToNextVideo()"
             class="carousel-container__video"
           />
         </div>
@@ -58,8 +56,7 @@ export default {
   data() {
     return {
       activeStoryIndex: 0,
-      activeMediaIndex: 0,
-      hasVideoStarted: false
+      activeMediaIndex: 0
     }
   },
   computed: {
@@ -69,13 +66,11 @@ export default {
       })
     },
     activeMedia() {
-      if (this.stories.length > 0) {
-        return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex]
+      if (this.stories.length === 0) {
+        return {}
       }
-      return undefined
+      return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex]
     }
-  },
-  mounted() {
   },
   methods: {
     storyMedia(storyData) {

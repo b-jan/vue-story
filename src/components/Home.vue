@@ -28,7 +28,7 @@ export default {
   },
   mounted () {
     this.axios
-      .get('https://wrapapi.com/use/baptistej/clipr/magsante/0.0.3?wrapAPIKey=Wa80vbUnmYXvnj48BMMyOeMCSW3zwg81')
+      .get('https://wrapapi.com/use/baptistej/clipr/magsante/0.0.5?wrapAPIKey=Wa80vbUnmYXvnj48BMMyOeMCSW3zwg81')
       .then(response => {
         this.logo = response.data.data.output.loading_logo
         this.stories = response.data.data.output.stories
