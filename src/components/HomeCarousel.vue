@@ -27,7 +27,10 @@
             :poster="activeMedia.thumbnail"
             :src="activeMedia.mp4"
             autoplay
+            defaultMuted
             muted
+            webkit-playsinline="true"
+            playsinline="true"
             class="carousel-container__video"
           />
         </div>
