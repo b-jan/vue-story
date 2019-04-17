@@ -2,38 +2,34 @@
   <div class="carousel-container">
     <Carousel
       :per-page="1"
-      :value="activeStory"
+      :value="activeStoryIndex"
       :mouse-drag="true"
       :pagination-enabled="false"
       centerMode
       @page-change="changeStory"
     >
       <Slide
-        v-for="(storyData, index1) in stories"
-        :class="{'VueCarousel-slide-current': activeMedia === index1}"
-        :key="index1"
+        v-for="(storyData, index) in stories"
+        :class="{'VueCarousel-slide-current': activeMediaIndex === index}"
+        :key="index"
       >
         <div
-          v-for="(story, index2) in storyMedia(storyData)"
-          :key="story.src"
           class="carousel-container__media-container"
-          @click="() => goToNextMedia(index1, story.type)"
+          @click="() => goToNextMedia(index, story.type)"
         >
           <img
-            v-if="story.type === 'image'"
-            :src="story.src"
-            :class="{'carousel-container__image--current': index2 === activeMedia}"
+            v-if="activeMedia && activeMedia.type === 'image'"
+            :src="activeMedia.src"
             class="carousel-container__image"
           >
           <video
-            v-if="story.type === 'video'"
-            :poster="story.thumbnail"
+            v-if="activeMedia && activeMedia.type === 'video'"
+            :poster="activeMedia.thumbnail"
             ref="video"
-            :src="story.mp4"
+            :src="activeMedia.mp4"
             autoplay
             muted
-            @timeupdate="() => goToNextMedia(index2)"
-            :class="{'carousel-container__video--current': index2 === activeMedia}"
+            @timeupdate="() => goToNextVideo()"
             class="carousel-container__video"
           />
         </div>
@@ -61,8 +57,8 @@ export default {
   },
   data() {
     return {
-      activeStory: 0,
-      activeMedia: 0,
+      activeStoryIndex: 0,
+      activeMediaIndex: 0,
       hasVideoStarted: false
     }
   },
@@ -71,18 +67,26 @@ export default {
       return this.stories.map(storyData => {
         return storyData.content.story.length
       })
+    },
+    activeMedia() {
+      if (this.stories.length > 0) {
+        return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex]
+      }
+      return undefined
     }
+  },
+  mounted() {
   },
   methods: {
     storyMedia(storyData) {
       return storyData.content.story
     },
     changeStory(storyNumber) {
-      this.activeStory = storyNumber
+      this.activeStoryIndex = storyNumber
     },
-    goToNextMedia: function(index1, type) {
+    goToNextMedia: function(index, type) {
       if (type === 'image') {
-        this.activeMedia += 1
+        this.activeMediaIndex += 1
       }
 
       if (type === 'video') {
@@ -90,18 +94,13 @@ export default {
       }
 
       // On last slide, go on next story, on first slide
-      if (this.activeMedia === this.storiesLength[index1]) {
-        this.activeMedia = 0
-        this.activeStory += 1
+      if (this.activeMediaIndex === this.storiesLength[index]) {
+        this.activeMediaIndex = 0
+        this.activeStoryIndex += 1
       }
     },
     goToNextVideo: function() {
-      this.activeMedia += 1
-      this.replayCurrentVideo()
-    },
-    replayCurrentVideo: function() {
-      this.$refs.video[this.activeMedia].currentTime = 0
-      this.$refs.video[this.activeMedia].play()
+      this.activeMediaIndex += 1
     }
   }
 }
@@ -120,24 +119,16 @@ export default {
 
   &__image {
     width: 100%;
-    display: none;
+    display: flex;
     object-fit: cover;
     object-position: 75% 50%;
-
-    &--current {
-      display: flex;
-    }
   }
 
   &__video {
     width: 100%;
-    display: none;
+    display: flex;
     object-fit: cover;
     object-position: 75% 50%;
-
-    &--current {
-      display: flex;
-    }
   }
 }
 
