@@ -27,6 +27,7 @@
           >
           <video
             v-if="story.type === 'video'"
+            :poster="story.thumbnail"
             ref="video"
             :src="story.mp4"
             autoplay
