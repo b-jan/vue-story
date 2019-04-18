@@ -15,24 +15,44 @@
         <div
           v-if="index === activeStoryIndex"
           class="carousel-container__media-container"
-          @click="() => goToNextMedia(index, activeMedia.type)"
+          @click="() => goToNextMedia(index)"
         >
-          <img
-            v-if="activeMedia !== undefined && activeMedia.type === 'image'"
-            :src="activeMedia.src"
-            class="carousel-container__image"
-          >
-          <video
-            v-if="activeMedia !== undefined && activeMedia.type === 'video'"
-            :poster="activeMedia.thumbnail"
-            :src="activeMedia.mp4"
-            autoplay
-            defaultMuted
-            muted
-            webkit-playsinline="true"
-            playsinline="true"
-            class="carousel-container__video"
-          />
+          <div v-show="isMediaPairActive">
+            <img
+              v-if="mediaPair.type === 'image'"
+              :src="mediaPair.src"
+              class="carousel-container__image"
+            >
+            <video
+              v-if="mediaPair.type === 'video'"
+              :poster="mediaPair.thumbnail"
+              :src="mediaPair.mp4"
+              autoplay
+              defaultMuted
+              muted
+              webkit-playsinline="true"
+              playsinline="true"
+              class="carousel-container__video"
+            />
+          </div>
+          <div v-show="isMediaOddActive">
+            <img
+              v-if="mediaOdd.type === 'image'"
+              :src="mediaOdd.src"
+              class="carousel-container__image"
+            >
+            <video
+              v-if="mediaOdd.type === 'video'"
+              :poster="mediaOdd.thumbnail"
+              :src="mediaOdd.mp4"
+              autoplay
+              defaultMuted
+              muted
+              webkit-playsinline="true"
+              playsinline="true"
+              class="carousel-container__video"
+            />
+          </div>
         </div>
       </Slide>
     </Carousel>
@@ -68,11 +88,48 @@ export default {
         return storyData.content.story.length
       })
     },
-    activeMedia() {
+    isMediaPairActive() {
+      return (this.activeMediaIndex + 1) % 2
+    },
+    isMediaOddActive() {
+      return this.activeMediaIndex % 2
+    },
+    currentMedia() {
+      return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex]
+    },
+    nextMedia() {
+      return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex + 1]
+    },
+    nextStoryFirstMedia() {
+      return this.stories[this.activeStoryIndex + 1].content.story[0]
+    },
+    mediaPair() {
       if (this.stories.length === 0) {
         return {}
       }
-      return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex]
+      if (this.isMediaPairActive)
+        return this.currentMedia
+      if (this.isMediaOddActive && this.nextMedia)
+        return this.nextMedia
+
+      if (this.nextStoryFirstMedia)
+        return this.nextStoryFirstMedia
+
+      return {}
+    },
+    mediaOdd() {
+      if (this.stories.length === 0) {
+        return {}
+      }
+      if (this.isMediaOddActive)
+        return this.currentMedia
+      if (this.isMediaPairActive && this.nextMedia)
+        return this.nextMedia
+
+      if (this.nextStoryFirstMedia)
+        return this.nextStoryFirstMedia
+
+      return {}
     }
   },
   methods: {
@@ -82,23 +139,14 @@ export default {
     changeStory(storyNumber) {
       this.activeStoryIndex = storyNumber
     },
-    goToNextMedia: function(index, type) {
-      if (type === 'image') {
-        this.activeMediaIndex += 1
-      }
-
-      if (type === 'video') {
-        this.goToNextVideo()
-      }
+    goToNextMedia: function(index) {
+      this.activeMediaIndex += 1
 
       // On last slide, go on next story, on first slide
       if (this.activeMediaIndex === this.storiesLength[index]) {
         this.activeMediaIndex = 0
         this.activeStoryIndex += 1
       }
-    },
-    goToNextVideo: function() {
-      this.activeMediaIndex += 1
     }
   }
 }
