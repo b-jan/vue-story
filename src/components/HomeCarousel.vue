@@ -54,6 +54,15 @@
             />
           </div>
         </div>
+        <div
+          v-if="index === activeStoryIndex + 1"
+          class="carousel-container__media-container"
+        >
+          <img
+            :src="nextStoryFirstMedia.thumbnail || nextStoryFirstMedia.src"
+            class="carousel-container__image"
+          >
+        </div>
       </Slide>
     </Carousel>
   </div>
@@ -137,6 +146,7 @@ export default {
       return storyData.content.story
     },
     changeStory(storyNumber) {
+      this.activeMediaIndex = 0
       this.activeStoryIndex = storyNumber
     },
     goToNextMedia: function(index) {
