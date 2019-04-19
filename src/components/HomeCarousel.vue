@@ -15,7 +15,8 @@
         <div
           v-if="index === activeStoryIndex"
           class="carousel-container__media-container"
-          @click="() => goToNextMedia(index)"
+          @click="(event) => changeMedia(index, event)"
+          ref="media-container"
         >
           <div v-show="isMediaPairActive">
             <img
@@ -59,7 +60,16 @@
           class="carousel-container__media-container"
         >
           <img
-            :src="nextStoryFirstMedia.thumbnail || nextStoryFirstMedia.src"
+            :src="nextStoryLatestMedia.thumbnail || nextStoryLatestMedia.src"
+            class="carousel-container__image"
+          >
+        </div>
+        <div
+          v-if="index === activeStoryIndex - 1"
+          class="carousel-container__media-container"
+        >
+          <img
+            :src="previousStoryLatestMedia.thumbnail || previousStoryLatestMedia.src"
             class="carousel-container__image"
           >
         </div>
@@ -88,10 +98,14 @@ export default {
   data() {
     return {
       activeStoryIndex: 0,
-      activeMediaIndex: 0
+      activeMediaIndex: 0,
+      storiesLatestMedia: []
     }
   },
   computed: {
+    globalLength(){
+      return this.stories.length
+    },
     storiesLength() {
       return this.stories.map(storyData => {
         return storyData.content.story.length
@@ -109,8 +123,11 @@ export default {
     nextMedia() {
       return this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex + 1]
     },
-    nextStoryFirstMedia() {
-      return this.stories[this.activeStoryIndex + 1].content.story[0]
+    previousStoryLatestMedia() {
+      return this.stories[this.activeStoryIndex - 1].content.story[this.storiesLatestMedia[this.activeStoryIndex - 1]]
+    },
+    nextStoryLatestMedia() {
+      return this.stories[this.activeStoryIndex + 1].content.story[this.storiesLatestMedia[this.activeStoryIndex + 1]]
     },
     mediaPair() {
       if (this.stories.length === 0) {
@@ -121,8 +138,8 @@ export default {
       if (this.isMediaOddActive && this.nextMedia)
         return this.nextMedia
 
-      if (this.nextStoryFirstMedia)
-        return this.nextStoryFirstMedia
+      if (this.nextStoryLatestMedia)
+        return this.nextStoryLatestMedia
 
       return {}
     },
@@ -135,27 +152,59 @@ export default {
       if (this.isMediaPairActive && this.nextMedia)
         return this.nextMedia
 
-      if (this.nextStoryFirstMedia)
-        return this.nextStoryFirstMedia
+      if (this.nextStoryLatestMedia)
+        return this.nextStoryLatestMedia
 
       return {}
+    }
+  },
+  watch: {
+    globalLength(length) {
+      if (length === 0) return
+      this.storiesLatestMedia.length = length
+      this.storiesLatestMedia.fill(0)
     }
   },
   methods: {
     storyMedia(storyData) {
       return storyData.content.story
     },
-    changeStory(storyNumber) {
-      this.activeMediaIndex = 0
-      this.activeStoryIndex = storyNumber
+    setStoryLatestMedia() {
+      this.storiesLatestMedia[this.activeStoryIndex] = this.activeMediaIndex
     },
-    goToNextMedia: function(index) {
-      this.activeMediaIndex += 1
+    changeStory(storyIndex) {
+      this.setStoryLatestMedia()
+      this.activeMediaIndex = this.storiesLatestMedia[storyIndex]
+      this.activeStoryIndex = storyIndex
+    },
+    changeMedia: function(index, event) {
+      const containerWidth = this.$refs['media-container'][0].clientWidth
+      const x = event.clientX;
 
-      // On last slide, go on next story, on first slide
-      if (this.activeMediaIndex === this.storiesLength[index]) {
-        this.activeMediaIndex = 0
-        this.activeStoryIndex += 1
+      if (containerWidth / 2 > x) {
+        // On first media, go on previous story, on latest media
+        if (
+          this.activeMediaIndex === 0
+          && this.activeStoryIndex > 0
+        ) {
+          this.changeStory(this.activeStoryIndex -  1)
+        }
+        else {
+          this.activeMediaIndex -= 1
+        }
+
+      }
+      else {
+        // On last media, go on next story, on latest media
+        if (
+          this.activeMediaIndex === this.storiesLength[index] - 1
+          && this.activeStoryIndex < this.stories.length
+        ) {
+          this.changeStory(this.activeStoryIndex +  1)
+        }
+        else {
+          this.activeMediaIndex += 1
+        }
       }
     }
   }
