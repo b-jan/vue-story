@@ -84,9 +84,11 @@ export default {
       return !!(this.activeMediaIndex % 2)
     },
     currentMedia() {
-      return this.stories[this.activeStoryIndex].content.story[
-        this.activeMediaIndex
-      ]
+      if (this.stories[this.activeStoryIndex])
+        return this.stories[this.activeStoryIndex].content.story[
+          this.activeMediaIndex
+        ]
+      return null
     },
     nextMedia() {
       return this.stories[this.activeStoryIndex].content.story[
@@ -142,6 +144,13 @@ export default {
       // initiate stories latest media indexes state with a table of 0
       this.storiesLatestMediaIndex.length = length
       this.storiesLatestMediaIndex.fill(0)
+    },
+    currentMedia(newMedia) {
+      if (!newMedia || (newMedia.type === 'video' && newMedia.duration === 0)) {
+        this.goToNextMedia()
+        return
+      }
+      this.setStoryLatestMedia()
     }
   },
   methods: {
@@ -152,7 +161,6 @@ export default {
       this.storiesLatestMediaIndex[this.activeStoryIndex] = this.activeMediaIndex
     },
     changeStory(storyIndex) {
-      this.setStoryLatestMedia()
       this.activeMediaIndex = this.storiesLatestMediaIndex[storyIndex]
       this.activeStoryIndex = storyIndex
     },
@@ -177,7 +185,7 @@ export default {
     goToNextMedia() {
       // When last media, go on next story, on the latest media
       if (
-        this.activeMediaIndex === this.storiesLength[this.activeMediaIndex] - 1 &&
+        this.activeMediaIndex === this.storiesLength[this.activeStoryIndex] - 1 &&
         this.activeStoryIndex < this.stories.length
       ) {
         this.changeStory(this.activeStoryIndex + 1)
