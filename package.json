@@ -31,13 +31,19 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
+      "plugin:vue/recommended"
+    ],
+    "plugins": [
+      "vue"
     ],
     "rules": {},
     "parserOptions": {
       "parser": "babel-eslint"
     }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
   },
   "postcss": {
     "plugins": {

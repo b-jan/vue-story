@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <Home />
+    <Clipr />
   </div>
 </template>
 
 <script>
-import Home from './components/Home.vue'
+import Clipr from './components/Clipr.vue'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    Home
+    Clipr
   }
 }
 </script>

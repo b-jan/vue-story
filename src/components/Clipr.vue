@@ -1,29 +1,23 @@
 <template>
-  <div class="home-container">
-    <HomeCarousel
-      :stories="availableStories"
+  <div class="clipr-container">
+    <Stories
+      :stories="stories"
     />
   </div>
 </template>
 
 <script>
-import HomeCarousel from './HomeCarousel.vue'
+import Stories from './Stories.vue'
 
 export default {
-  name: 'Home',
+  name: 'Clipr',
   components: {
-    HomeCarousel
+    Stories
   },
   data() {
     return {
       logo: '',
       stories: []
-    }
-  },
-  computed: {
-    availableStories() {
-      if (this.stories.length === 0) return []
-      return this.stories
     }
   },
   mounted () {
@@ -38,8 +32,8 @@ export default {
 </script>
 
 <style scoped>
-.home-container {
-  background: white;
+.clipr-container {
+  background: black;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
