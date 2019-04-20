@@ -1,7 +1,11 @@
 <template>
-  <div class="clipr-container">
+  <div
+    class="clipr-container"
+  >
     <Stories
       :stories="stories"
+      @touchend="handleTouch"
+      @touchMove="handleTouch"
     />
   </div>
 </template>
@@ -27,7 +31,26 @@ export default {
         this.logo = response.data.data.output.loading_logo
         this.stories = response.data.data.output.stories
       })
-  }
+    this.handleScroll()
+  },
+  methods: {
+    handleTouch(event) {
+      event.preventDefault()
+      const body = document.documentElement;
+      if (body.requestFullscreen) {
+        body.requestFullscreen();
+      } else if (body.webkitrequestFullscreen) {
+        body.webkitrequestFullscreen();
+      } else if (body.mozrequestFullscreen) {
+        body.mozrequestFullscreen();
+      } else if (body.msrequestFullscreen) {
+        body.msrequestFullscreen();
+      }
+    },
+    handleScroll() {
+      window.addEventListener("load", function() { window. scrollTo(0, 1); });
+    }
+  },
 }
 </script>
 
