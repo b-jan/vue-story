@@ -9,15 +9,25 @@
     >
     <video
       v-if="media.type === 'video'"
+      ref="video"
       :poster="media.thumbnail"
-      :src="media.mp4"
       autoplay
       defaultMuted
       muted
       webkit-playsinline="true"
       playsinline="true"
       class="media-container__video"
-    />
+      @timeupdate="handleTimeUpdate"
+    >
+      <source
+        :src="media.webm"
+        type="video/webm"
+      >
+      <source
+        :src="media.mp4"
+        type="video/mp4"
+      >
+    </video>
   </div>
 </template>
 
