@@ -14,15 +14,17 @@
         <div
           v-if="index === activeStoryIndex"
           ref="media-container"
-          @click="event => changeMedia(index, event)"
+          @click="event => changeMedia(event)"
         >
           <Media
             v-show="isMediaPairActive"
             :media="mediaPair"
+            @end-video="goToNextMedia"
           />
           <Media
             v-show="isMediaOddActive"
             :media="mediaOdd"
+            @end-video="goToNextMedia"
           />
         </div>
         <MediaPreview
@@ -92,11 +94,21 @@ export default {
       ]
     },
     previousStoryLatestMedia() {
+      // When first media, do not load any story
+      if (this.activeStoryIndex === 0) {
+        return {}
+      }
       return this.stories[this.activeStoryIndex - 1].content.story[
         this.storiesLatestMediaIndex[this.activeStoryIndex - 1]
       ]
     },
     nextStoryLatestMedia() {
+      // When last media, go on next story, on the latest media
+      if (
+        this.activeStoryIndex === this.stories.length - 1
+      ) {
+        return {}
+      }
       return this.stories[this.activeStoryIndex + 1].content.story[
         this.storiesLatestMediaIndex[this.activeStoryIndex + 1]
       ]
@@ -144,27 +156,33 @@ export default {
       this.activeMediaIndex = this.storiesLatestMediaIndex[storyIndex]
       this.activeStoryIndex = storyIndex
     },
-    changeMedia: function(index, event) {
+    changeMedia: function(event) {
       const containerWidth = this.$refs['media-container'][0].clientWidth
       const x = event.clientX
 
       if (containerWidth / 2 > x) {
-        // On first media, go on previous story, on latest media
-        if (this.activeMediaIndex === 0 && this.activeStoryIndex > 0) {
-          this.changeStory(this.activeStoryIndex - 1)
-        } else {
-          this.activeMediaIndex -= 1
-        }
+        this.goToPreviousMedia()
       } else {
-        // On last media, go on next story, on latest media
-        if (
-          this.activeMediaIndex === this.storiesLength[index] - 1 &&
-          this.activeStoryIndex < this.stories.length
-        ) {
-          this.changeStory(this.activeStoryIndex + 1)
-        } else {
-          this.activeMediaIndex += 1
-        }
+        this.goToNextMedia()
+      }
+    },
+    goToPreviousMedia() {
+      // When first media, go on previous story, on the latest media
+      if (this.activeMediaIndex === 0 && this.activeStoryIndex > 0) {
+        this.changeStory(this.activeStoryIndex - 1)
+      } else {
+        this.activeMediaIndex -= 1
+      }
+    },
+    goToNextMedia() {
+      // When last media, go on next story, on the latest media
+      if (
+        this.activeMediaIndex === this.storiesLength[this.activeMediaIndex] - 1 &&
+        this.activeStoryIndex < this.stories.length
+      ) {
+        this.changeStory(this.activeStoryIndex + 1)
+      } else {
+        this.activeMediaIndex += 1
       }
     }
   }

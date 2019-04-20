@@ -41,7 +41,18 @@ export default {
         return {}
       }
     }
-  }
+  },
+  methods: {
+    handleTimeUpdate() {
+      if (!this.$refs.video) return
+
+      const video = this.$refs.video
+      if (video.currentTime < video.duration) return
+
+      this.$emit('end-video')
+      video.currentTime = 0
+    }
+  },
 }
 </script>
 
