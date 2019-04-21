@@ -33,6 +33,10 @@ export default {
       default: function() {
         return {}
       }
+    },
+    active: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -41,6 +45,14 @@ export default {
       // if (video.canPlayType('video/webm') === 'probably')
       //   return this.media.webm
       return this.media.mp4
+    }
+  },
+  watch: {
+    active(newValue) {
+      if (!this.$refs.video) return
+
+      const video = this.$refs.video
+      if (!newValue) video.currentTime = 0
     }
   },
   methods: {

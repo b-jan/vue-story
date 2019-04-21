@@ -19,12 +19,14 @@
           <Media
             v-show="isMediaPairActive"
             :media="mediaPair"
+            :active="isMediaPairActive"
             @end-video="goToNextMedia"
             @remove-preview="removePreview"
           />
           <Media
             v-show="isMediaOddActive"
             :media="mediaOdd"
+            :active="isMediaOddActive"
             @end-video="goToNextMedia"
             @remove-preview="removePreview"
           />
