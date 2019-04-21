@@ -56,6 +56,7 @@ export default {
 
       const video = this.$refs.video
       if (!newValue) video.currentTime = 0
+      if (newValue) video.play()
     }
   },
   methods: {
@@ -72,7 +73,7 @@ export default {
       this.$emit('remove-loading')
       const video = this.$refs.video
 
-      video.play()
+      if (this.active) video.play()
     }
   },
 }
