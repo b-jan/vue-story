@@ -30,11 +30,6 @@
           />
         </div>
         <MediaPreview
-          v-if="index === activeStoryIndex && !isVideoReady"
-          :media="currentMedia"
-          class="stories-container__preview"
-        />
-        <MediaPreview
           v-if="index === activeStoryIndex + 1"
           :media="nextStoryLatestMedia"
         />
@@ -212,13 +207,10 @@ export default {
 
 <style lang="scss" scoped>
 .stories-container {
-  position: relative;
   display: flex;
   flex-direction: column;
-
-  &__preview {
-    position: absolute;
-  }
+  justify-content: center;
+  height: 100vh;
 }
 
 </style>
