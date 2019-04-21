@@ -20,13 +20,20 @@
             v-show="isMediaPairActive"
             :media="mediaPair"
             @end-video="goToNextMedia"
+            @remove-preview="removePreview"
           />
           <Media
             v-show="isMediaOddActive"
             :media="mediaOdd"
             @end-video="goToNextMedia"
+            @remove-preview="removePreview"
           />
         </div>
+        <MediaPreview
+          v-if="index === activeStoryIndex && !isVideoReady"
+          :media="currentMedia"
+          class="stories-container__preview"
+        />
         <MediaPreview
           v-if="index === activeStoryIndex + 1"
           :media="nextStoryLatestMedia"
@@ -65,7 +72,8 @@ export default {
     return {
       activeStoryIndex: 0,
       activeMediaIndex: 0,
-      storiesLatestMediaIndex: []
+      storiesLatestMediaIndex: [],
+      isVideoReady: false
     }
   },
   computed: {
@@ -91,12 +99,14 @@ export default {
       return null
     },
     nextMedia() {
-      return this.stories[this.activeStoryIndex].content.story[
-        this.activeMediaIndex + 1
-      ]
+      if (this.stories[this.activeStoryIndex])
+        return this.stories[this.activeStoryIndex].content.story[
+          this.activeMediaIndex + 1
+        ]
+      return null
     },
     previousStoryLatestMedia() {
-      // When first media, do not load any story
+      // When first story, do not load any media
       if (this.activeStoryIndex === 0) {
         return {}
       }
@@ -105,7 +115,7 @@ export default {
       ]
     },
     nextStoryLatestMedia() {
-      // When last media, go on next story, on the latest media
+      // When first story, do not load any media
       if (
         this.activeStoryIndex === this.stories.length - 1
       ) {
@@ -157,6 +167,9 @@ export default {
     storyMedia(storyData) {
       return storyData.content.story
     },
+    removePreview() {
+      this.isVideoReady = true
+    },
     setStoryLatestMedia() {
       this.storiesLatestMediaIndex[this.activeStoryIndex] = this.activeMediaIndex
     },
@@ -199,8 +212,13 @@ export default {
 
 <style lang="scss" scoped>
 .stories-container {
+  position: relative;
   display: flex;
   flex-direction: column;
+
+  &__preview {
+    position: absolute;
+  }
 }
 
 </style>

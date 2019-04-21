@@ -54,7 +54,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .clipr-container {
   background: black;
   height: 100vh;

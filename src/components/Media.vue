@@ -11,6 +11,7 @@
       v-if="media.type === 'video'"
       ref="video"
       :poster="media.thumbnail"
+      :src="videoSource"
       autoplay
       defaultMuted
       muted
@@ -18,16 +19,8 @@
       playsinline="true"
       class="media-container__video"
       @timeupdate="handleTimeUpdate"
-    >
-      <source
-        :src="media.webm"
-        type="video/webm"
-      >
-      <source
-        :src="media.mp4"
-        type="video/mp4"
-      >
-    </video>
+      @canplay="removePreview"
+    />
   </div>
 </template>
 
@@ -42,15 +35,26 @@ export default {
       }
     }
   },
+  computed: {
+    videoSource() {
+      // const video = this.$refs.video
+      // if (video.canPlayType('video/webm') === 'probably')
+      //   return this.media.webm
+      return this.media.mp4
+    }
+  },
   methods: {
     handleTimeUpdate() {
       if (!this.$refs.video) return
 
       const video = this.$refs.video
-      if (video.currentTime < video.duration) return
+      if (!video.duration || video.currentTime < video.duration) return
 
       this.$emit('end-video')
       video.currentTime = 0
+    },
+    removePreview() {
+      this.$emit('remove-preview')
     }
   },
 }

@@ -27,13 +27,11 @@ export default {
 .thumbnail-container {
   width: 100%;
   object-fit: cover;
-  object-position: 75% 50%;
 
   &__image {
     width: 100%;
     display: flex;
     object-fit: cover;
-    object-position: 75% 50%;
   }
 }
 </style>
