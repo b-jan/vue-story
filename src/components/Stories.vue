@@ -23,37 +23,42 @@
         v-for="(storyData, index) in stories"
         :key="storyData.header_title + index"
       >
+        <MediaPreview
+          v-if="index === activeStoryIndex - 1"
+          :media="previousStoryLatestMedia"
+          class="stories-container__media"
+        />
+        <MediaPreview
+          v-if="index === activeStoryIndex && previousMediaIndex > -1"
+          :style="{zIndex: previousMediaZIndex}"
+          :media="previousMedia"
+          class="stories-container__media"
+        />
         <div
           v-if="index === activeStoryIndex"
           ref="media-container"
+          :style="{zIndex: 1}"
+          class="stories-container__media"
           @click="event => changeMedia(event)"
         >
           <Media
-            v-show="isMediaPairActive"
-            :media="mediaPair"
-            :active="isMediaPairActive"
-            @end-video="goToNextMedia"
-            @remove-loading="removeLoading"
-          />
-          <Media
-            v-show="isMediaOddActive"
-            :media="mediaOdd"
-            :active="isMediaOddActive"
+            v-show="isVideoReady"
+            :media="currentMedia"
+            :active="isVideoReady"
             @end-video="goToNextMedia"
             @remove-loading="removeLoading"
           />
         </div>
         <MediaPreview
+          v-if="index === activeStoryIndex && nextMediaIndex < storiesLength[activeStoryIndex]"
+          :style="{zIndex: nextMediaZIndex}"
           :media="nextMedia"
-          class="stories-container__preview"
+          class="stories-container__media"
         />
         <MediaPreview
           v-if="index === activeStoryIndex + 1"
           :media="nextStoryLatestMedia"
-        />
-        <MediaPreview
-          v-if="index === activeStoryIndex - 1"
-          :media="previousStoryLatestMedia"
+          class="stories-container__media"
         />
       </Slide>
     </Carousel>
@@ -75,10 +80,10 @@ export default {
   },
   props: {
     stories: {
+      type: Array,
       default: function() {
         return []
-      },
-      type: Array
+      }
     }
   },
   data() {
@@ -86,6 +91,10 @@ export default {
       activeStoryIndex: 0,
       activeMediaIndex: 0,
       storiesLatestMediaIndex: [],
+      previousMediaIndex: -1,
+      nextMediaIndex: 1,
+      previousMediaZIndex: 0,
+      nextMediaZIndex: 0,
       isVideoReady: false
     }
   },
@@ -98,14 +107,21 @@ export default {
         return storyData.content.story.length
       })
     },
-    isMediaPairActive() {
-      return !!((this.activeMediaIndex + 1) % 2)
-    },
-    isMediaOddActive() {
-      return !!(this.activeMediaIndex % 2)
+    previousMedia() {
+      if (
+        this.stories[this.activeStoryIndex]
+        && this.stories[this.activeStoryIndex].content.story[this.previousMediaIndex]
+      )
+        return this.stories[this.activeStoryIndex].content.story[
+          this.previousMediaIndex
+        ]
+      return null
     },
     currentMedia() {
-      if (this.stories[this.activeStoryIndex])
+      if (
+        this.stories[this.activeStoryIndex]
+        && this.stories[this.activeStoryIndex].content.story[this.activeMediaIndex]
+      )
         return this.stories[this.activeStoryIndex].content.story[
           this.activeMediaIndex
         ]
@@ -114,7 +130,7 @@ export default {
     nextMedia() {
       if (this.stories[this.activeStoryIndex])
         return this.stories[this.activeStoryIndex].content.story[
-          this.activeMediaIndex + 1
+          this.nextMediaIndex
         ]
       return null
     },
@@ -137,28 +153,6 @@ export default {
       return this.stories[this.activeStoryIndex + 1].content.story[
         this.storiesLatestMediaIndex[this.activeStoryIndex + 1]
       ]
-    },
-    mediaPair() {
-      if (this.stories.length === 0) {
-        return {}
-      }
-      if (this.isMediaPairActive) return this.currentMedia
-      if (this.isMediaOddActive && this.nextMedia) return this.nextMedia
-
-      if (this.nextStoryLatestMedia) return this.nextStoryLatestMedia
-
-      return {}
-    },
-    mediaOdd() {
-      if (this.stories.length === 0) {
-        return {}
-      }
-      if (this.isMediaOddActive) return this.currentMedia
-      if (this.isMediaPairActive && this.nextMedia) return this.nextMedia
-
-      if (this.nextStoryLatestMedia) return this.nextStoryLatestMedia
-
-      return {}
     }
   },
   watch: {
@@ -173,6 +167,11 @@ export default {
         this.goToNextMedia()
         return
       }
+      this.previousMediaIndex = this.activeMediaIndex - 1
+      this.previousMediaZIndex = 0
+      this.nextMediaIndex = this.activeMediaIndex + 1
+      this.nextMediaZIndex = 0
+
       this.setStoryLatestMedia()
     }
   },
@@ -191,6 +190,7 @@ export default {
       this.activeStoryIndex = storyIndex
     },
     changeMedia: function(event) {
+      this.isVideoReady = false
       const containerWidth = this.$refs['media-container'][0].clientWidth
       const x = event.clientX
 
@@ -205,6 +205,7 @@ export default {
       if (this.activeMediaIndex === 0 && this.activeStoryIndex > 0) {
         this.changeStory(this.activeStoryIndex - 1)
       } else {
+        this.previousMediaZIndex = 2
         this.activeMediaIndex -= 1
       }
     },
@@ -216,6 +217,7 @@ export default {
       ) {
         this.changeStory(this.activeStoryIndex + 1)
       } else {
+        this.nextMediaZIndex = 2
         this.activeMediaIndex += 1
       }
     }
@@ -231,12 +233,12 @@ export default {
   height: 100vh;
   position: relative;
 
-  &__preview {
+  &__media {
     z-index: -1;
     position: absolute;
+    display: flex;
     align-items: center;
     height: 100vh;
-    top: 0;
     left: 0;
     right: 0;
     margin: auto;
@@ -262,6 +264,15 @@ export default {
 
 @keyframes rotation {
   to { transform: rotate(360deg); }
+}
+
+.VueCarousel {
+  height: 100vh;
+}
+
+.VueCarousel-slide {
+  position: relative;
+  height: 100vh;
 }
 
 </style>
