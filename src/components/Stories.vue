@@ -1,5 +1,16 @@
 <template>
   <div class="stories-container">
+    <keep-alive>
+      <div
+        v-if="!isVideoReady"
+        class="loading-container"
+      >
+        <img
+          src="../assets/download.png"
+          class="loading-container__spinner"
+        >
+      </div>
+    </keep-alive>
     <Carousel
       :per-page="1"
       :value="activeStoryIndex"
@@ -21,14 +32,14 @@
             :media="mediaPair"
             :active="isMediaPairActive"
             @end-video="goToNextMedia"
-            @remove-preview="removePreview"
+            @remove-loading="removeLoading"
           />
           <Media
             v-show="isMediaOddActive"
             :media="mediaOdd"
             :active="isMediaOddActive"
             @end-video="goToNextMedia"
-            @remove-preview="removePreview"
+            @remove-loading="removeLoading"
           />
         </div>
         <MediaPreview
@@ -164,7 +175,7 @@ export default {
     storyMedia(storyData) {
       return storyData.content.story
     },
-    removePreview() {
+    removeLoading() {
       this.isVideoReady = true
     },
     setStoryLatestMedia() {
@@ -213,6 +224,28 @@ export default {
   flex-direction: column;
   justify-content: center;
   height: 100vh;
+  position: relative;
+}
+
+.loading-container {
+  background:rgba(255, 255, 255, 0.5);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  z-index: 1;
+  left: 0;
+  right: 0;
+
+  &__spinner {
+    animation: 3s rotation infinite linear;
+    width: 50px;
+    margin: auto;
+  }
+}
+
+@keyframes rotation {
+  to { transform: rotate(360deg); }
 }
 
 </style>

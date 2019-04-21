@@ -5,6 +5,7 @@
     <img
       v-if="media.type === 'image'"
       :src="media.src"
+      decoding="sync"
       class="media-container__image"
     >
     <video
@@ -12,6 +13,7 @@
       ref="video"
       :poster="media.thumbnail"
       :src="videoSource"
+      preload="auto"
       autoplay
       defaultMuted
       muted
@@ -19,7 +21,7 @@
       playsinline="true"
       class="media-container__video"
       @timeupdate="handleTimeUpdate"
-      @canplay="removePreview"
+      @canplay="removeLoading"
     />
   </div>
 </template>
@@ -65,8 +67,8 @@ export default {
       this.$emit('end-video')
       video.currentTime = 0
     },
-    removePreview() {
-      this.$emit('remove-preview')
+    removeLoading() {
+      this.$emit('remove-loading')
     }
   },
 }
