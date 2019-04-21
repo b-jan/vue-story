@@ -39,6 +39,10 @@ export default {
     active: {
       type: Boolean,
       default: false
+    },
+    position: {
+      type: String,
+      default: ''
     }
   },
   computed: {
@@ -54,7 +58,10 @@ export default {
       if (!this.$refs.video) return
 
       const video = this.$refs.video
-      if (!newValue) video.currentTime = 0
+      if (!newValue) {
+        video.currentTime = 0
+        video.pause()
+      }
       if (newValue) video.play()
     }
   },
@@ -69,8 +76,11 @@ export default {
       video.currentTime = 0
     },
     removeLoading() {
-      this.$emit('remove-loading')
+      this.$emit('remove-loading', this.position)
       const video = this.$refs.video
+
+      video.currentTime = 0
+      video.pause()
 
       if (this.active) video.play()
     }

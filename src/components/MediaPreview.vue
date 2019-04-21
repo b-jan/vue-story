@@ -1,10 +1,10 @@
 <template>
   <div
-    class="thumbnail-container"
+    class="preview-container"
   >
     <img
       :src="media.thumbnail || media.src"
-      class="thumbnail-container__image"
+      class="preview-container__image"
     >
   </div>
 </template>
@@ -24,7 +24,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.thumbnail-container {
+.preview-container {
   width: 100%;
   object-fit: cover;
 
