@@ -44,6 +44,10 @@
           />
         </div>
         <MediaPreview
+          :media="nextMedia"
+          class="stories-container__preview"
+        />
+        <MediaPreview
           v-if="index === activeStoryIndex + 1"
           :media="nextStoryLatestMedia"
         />
@@ -226,10 +230,21 @@ export default {
   justify-content: center;
   height: 100vh;
   position: relative;
+
+  &__preview {
+    z-index: -1;
+    position: absolute;
+    align-items: center;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
 }
 
 .loading-container {
-  background:rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.5);
   position: absolute;
   display: flex;
   align-items: center;
