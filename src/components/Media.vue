@@ -17,8 +17,8 @@
       autoplay
       defaultMuted
       muted
-      webkit-playsinline="true"
-      playsinline="true"
+      playsinline
+      webkit-playsinline
       class="media-container__video"
       @timeupdate="handleTimeUpdate"
       @canplay="removeLoading"

@@ -1,8 +1,9 @@
 <template>
   <div class="stories-container">
-    <keep-alive>
+    <keep-alive
+      v-if="!isVideoReady"
+    >
       <div
-        v-if="!isVideoReady"
         class="loading-container"
       >
         <img
