@@ -21,6 +21,7 @@
       webkit-playsinline
       class="media-container__video"
       @timeupdate="handleTimeUpdate"
+      @loadedmetadata="removeLoading"
       @canplay="removeLoading"
     />
   </div>
@@ -69,6 +70,9 @@ export default {
     },
     removeLoading() {
       this.$emit('remove-loading')
+      const video = this.$refs.video
+
+      video.play()
     }
   },
 }
