@@ -21,7 +21,7 @@
       webkit-playsinline
       class="media-container__video"
       @timeupdate="handleTimeUpdate"
-      @loadedmetadata="removeLoading"
+      @loadedmetadata="BeReadyToStart"
     />
   </div>
 </template>
@@ -75,8 +75,7 @@ export default {
       this.$emit('end-video')
       video.currentTime = 0
     },
-    removeLoading() {
-      this.$emit('remove-loading', this.position)
+    BeReadyToStart() {
       const video = this.$refs.video
 
       video.currentTime = 0

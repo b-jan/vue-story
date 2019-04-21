@@ -41,7 +41,6 @@
             :style="{zIndex: isMediaAlphaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
-            @remove-loading="removeLoading"
           />
           <Media
             v-if="mediaBeta"
@@ -51,7 +50,6 @@
             :style="{zIndex: isMediaBetaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
-            @remove-loading="removeLoading"
           />
           <Media
             v-if="mediaGamma"
@@ -61,7 +59,6 @@
             :style="{zIndex: isMediaGammaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
-            @remove-loading="removeLoading"
           />
         </div>
         <!-- <MediaPreview
@@ -227,9 +224,6 @@ export default {
   methods: {
     storyMedia(storyData) {
       return storyData.content.story
-    },
-    removeLoading(position) {
-      this[`isMedia${position}Active`] = true
     },
     setStoryLatestMedia(index) {
       this.storiesLatestMediaIndex[this.activeStoryIndex] = this.activeMediaIndex
