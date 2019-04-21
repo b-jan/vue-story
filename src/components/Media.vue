@@ -22,7 +22,6 @@
       class="media-container__video"
       @timeupdate="handleTimeUpdate"
       @loadedmetadata="removeLoading"
-      @canplay="removeLoading"
     />
   </div>
 </template>

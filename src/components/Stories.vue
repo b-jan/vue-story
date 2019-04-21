@@ -42,7 +42,6 @@
           @click="event => changeMedia(event)"
         >
           <Media
-            v-show="isVideoReady"
             :media="currentMedia"
             :active="isVideoReady"
             @end-video="goToNextMedia"
@@ -246,7 +245,7 @@ export default {
 }
 
 .loading-container {
-  background: rgba(255, 255, 255, 0.5);
+  // background: rgba(255, 255, 255, 0.5);
   position: absolute;
   display: flex;
   align-items: center;
