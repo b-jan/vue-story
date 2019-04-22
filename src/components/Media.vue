@@ -59,10 +59,12 @@ export default {
 
       const video = this.$refs.video
       if (!newValue) {
-        video.currentTime = 0
         video.pause()
       }
-      if (newValue) video.play()
+      if (newValue) {
+        video.currentTime = 0
+        video.play()
+      }
     }
   },
   methods: {
@@ -76,10 +78,11 @@ export default {
       video.currentTime = 0
     },
     BeReadyToStart() {
-      const video = this.$refs.video
+      if (!this.$refs.video) return
 
-      video.currentTime = 0
-      video.pause()
+      const video = this.$refs.video
+      // video.currentTime = 0
+      // video.pause()
 
       if (this.active) video.play()
     }

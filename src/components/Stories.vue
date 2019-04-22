@@ -37,7 +37,6 @@
             v-if="mediaAlpha"
             :media="mediaAlpha"
             :active="isMediaAlphaActive"
-            position="Alpha"
             :style="{zIndex: isMediaAlphaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
@@ -46,7 +45,6 @@
             v-if="mediaBeta"
             :media="mediaBeta"
             :active="isMediaBetaActive"
-            position="Beta"
             :style="{zIndex: isMediaBetaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
@@ -55,7 +53,6 @@
             v-if="mediaGamma"
             :media="mediaGamma"
             :active="isMediaGammaActive"
-            position="Gamma"
             :style="{zIndex: isMediaGammaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
@@ -66,11 +63,42 @@
           :media="nextMedia"
           class="stories-container__media-container"
         /> -->
+        <nav
+          class="navigation"
+          :style="{ gridTemplateColumns: 'repeat(' + storiesLength[index] + ', 1fr)'}"
+        >
+          <div
+            v-for="(story, storyIndex) in storyMedia(storyData)"
+            :key="story.thumbnail + storyIndex"
+          >
+            <div
+              :class="storyIndex < activeMediaIndex ? 'navigation__have-watched' : 'navigation__will-watch'"
+            />
+            <div
+              v-if="storyIndex === activeMediaIndex"
+              :class="'navigation__is-watching'"
+              :style="{ width: videoCurrentTime + '%'}"
+            />
+          </div>
+        </nav>
         <MediaPreview
           v-if="index === activeStoryIndex + 1"
           :media="nextStoryLatestMedia"
           class="stories-container__media-container"
         />
+        <div
+          class="stories-container__branding-container"
+        >
+          <img
+            :src="storyData.content.logo_top_left_img"
+            class="branding-container__logo"
+          >
+          <p
+            class="branding-container__brand"
+          >
+            {{ storyData.content.logo_top_left_title }}
+          </p>
+        </div>
       </Slide>
     </Carousel>
   </div>
@@ -107,6 +135,8 @@ export default {
       mediaAlphaIndex: -1,
       mediaBetaIndex: 0,
       mediaGammaIndex: 1,
+
+      videoCurrentTime: 0
     }
   },
   computed: {
@@ -292,6 +322,66 @@ export default {
     left: 0;
     right: 0;
     margin: auto;
+  }
+
+  &__branding-container {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    top: 0;
+    left: 0;
+    margin: 24px 0 0 16px;
+
+    .branding-container {
+      &__logo {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      &__brand {
+        color: white;
+        font-weight: bold;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+      }
+    }
+  }
+}
+
+.navigation {
+  position: fixed;
+  z-index: 1;
+  box-sizing: border-box;
+  display: grid;
+  grid-column-gap: 2px;
+  padding: 0 16px;
+  top: 16px;
+  width: 100%;
+
+  &__will-watch {
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 4px;
+    height: 4px;
+    width: 100%;
+  }
+
+  &__have-watched {
+    background: white;
+    border-radius: 4px;
+    height: 4px;
+    width: 100%;
+  }
+
+  &__is-watching {
+    background: white;
+    border-radius: 4px;
+    height: 4px;
+    -webkit-transition: width .1s linear;
+    transition: width .1s linear;
+    width: auto;
+    will-change: width;
   }
 }
 
