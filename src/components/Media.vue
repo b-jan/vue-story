@@ -67,11 +67,11 @@ export default {
       }
     },
     isSoundActive(newIsSoundActive) {
-      const video = this.$refs.video
-      if (video.muted != !newIsSoundActive) {
-        video.muted = !newIsSoundActive
-      }
+      this.activateSound(newIsSoundActive)
     }
+  },
+  mounted() {
+    this.activateSound(this.isSoundActive)
   },
   methods: {
     handleTimeUpdate() {
@@ -93,6 +93,12 @@ export default {
       // video.pause()
 
       if (this.active) video.play()
+    },
+    activateSound(newIsSoundActive) {
+      const video = this.$refs.video
+      if (video.muted != !newIsSoundActive) {
+        video.muted = !newIsSoundActive
+      }
     }
   },
 }
