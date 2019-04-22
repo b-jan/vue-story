@@ -21,6 +21,12 @@
           :media="previousStoryLatestMedia"
           class="stories-container__media-container"
         />
+        <Navigation
+          v-if="index === activeStoryIndex - 1"
+          :story-length="storiesLength[activeStoryIndex - 1]"
+          :active-media-index="storiesLatestMediaIndex[activeStoryIndex - 1]"
+          class="stories-container__navigation-container"
+        />
         <!-- <MediaPreview
           v-if="index === activeStoryIndex && activeMediaIndex > 0"
           :media="previousMedia"
@@ -60,6 +66,13 @@
             @end-video="goToNextMedia"
             @update-current-time="(time) => updateCurrentTime(time)"
           />
+          <Navigation
+            v-if="index === activeStoryIndex"
+            :story-length="storiesLength[activeStoryIndex]"
+            :active-media-index="storiesLatestMediaIndex[activeStoryIndex]"
+            :video-current-time="mediaCurrentTime"
+            class="stories-container__navigation-container"
+          />
         </div>
         <!-- <MediaPreview
           v-if="index === activeStoryIndex && activeMediaIndex < storiesLength[activeStoryIndex] - 1"
@@ -72,10 +85,10 @@
           class="stories-container__media-container"
         />
         <Navigation
-          :story-length="storiesLength[index]"
-          :story-media="storyMedia(storyData)"
-          :active-media-index="activeMediaIndex"
-          :video-current-time="mediaBetaCurrentTime"
+          v-if="index === activeStoryIndex + 1"
+          :story-length="storiesLength[activeStoryIndex + 1]"
+          :active-media-index="storiesLatestMediaIndex[activeStoryIndex + 1]"
+          class="stories-container__navigation-container"
         />
         <Branding
           :story-data="storyData"
@@ -122,9 +135,7 @@ export default {
       mediaBetaIndex: 0,
       mediaGammaIndex: 1,
 
-      mediaAlphaCurrentTime: 0,
-      mediaBetaCurrentTime: 0,
-      mediaGammaCurrentTime: 0
+      mediaCurrentTime: 0
     }
   },
   computed: {
@@ -248,6 +259,7 @@ export default {
       this.storiesLatestMediaIndex[this.activeStoryIndex] = this.activeMediaIndex
     },
     changeStory(storyIndex) {
+      this.mediaCurrentTime = 0
       this.activeMediaIndex = this.storiesLatestMediaIndex[storyIndex]
       this.mediaAlphaIndex = this.activeMediaIndex - 1
       this.mediaBetaIndex = this.activeMediaIndex
@@ -256,7 +268,7 @@ export default {
       this.activeStoryIndex = storyIndex
     },
     changeMedia: function(event) {
-      this.videoCurrentTime = 0
+      this.mediaCurrentTime = 0
 
       const containerWidth = this.$refs['media-container'][0].clientWidth
       const x = event.clientX
@@ -292,8 +304,8 @@ export default {
         this.activeMediaIndex += 1
       }
     },
-    updateCurrentTime(time, position) {
-      this[`mediaBetaCurrentTime`] = time
+    updateCurrentTime(time) {
+      this[`mediaCurrentTime`] = time
     }
   }
 }
@@ -318,11 +330,16 @@ export default {
     margin: auto;
   }
 
+  &__navigation-container {
+    position: fixed;
+    z-index: 4;
+    top: 16px;
+    width: 100%;
+  }
+
   &__branding-container {
     position: absolute;
-    z-index: 1;
-    display: flex;
-    align-items: center;
+    z-index: 4;
     top: 0;
     left: 0;
     margin: 24px 0 0 16px;

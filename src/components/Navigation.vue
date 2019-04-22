@@ -4,15 +4,15 @@
     :style="{ gridTemplateColumns: 'repeat(' + storyLength + ', 1fr)'}"
   >
     <div
-      v-for="(story, storyIndex) in storyMedia"
-      :key="story.thumbnail + storyIndex"
+      v-for="storyNumber in storyLength"
+      :key="storyNumber"
       class="navigation-container__navigation"
     >
       <div
-        :class="storyIndex < activeMediaIndex ? 'navigation__have-watched' : 'navigation__will-watch'"
+        :class="storyNumber - 1 < activeMediaIndex ? 'navigation__have-watched' : 'navigation__will-watch'"
       />
       <div
-        v-if="storyIndex === activeMediaIndex"
+        v-if="storyNumber - 1 === activeMediaIndex"
         :class="'navigation__is-watching'"
         :style="{ width: videoCurrentTime + '%'}"
       />
@@ -28,12 +28,6 @@
         type: Number,
         default: 0
       },
-      storyMedia: {
-        type: Array,
-        default: function() {
-          return []
-        }
-      },
       activeMediaIndex: {
         type: Number,
         default: 0
@@ -48,14 +42,10 @@
 
 <style lang="scss" scoped>
 .navigation-container {
-  position: fixed;
-  z-index: 1;
   box-sizing: border-box;
   display: grid;
   grid-column-gap: 2px;
   padding: 0 16px;
-  top: 16px;
-  width: 100%;
 
   &__navigation {
     border-radius: 4px;

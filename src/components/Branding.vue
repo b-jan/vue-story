@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="branding-container">
     <img
       :src="storyData.content.logo_top_left_img"
       class="branding-container__logo"
@@ -28,6 +28,9 @@
 
 <style lang="scss" scoped>
 .branding-container {
+  display: flex;
+  align-items: center;
+
   &__logo {
     height: 40px;
     width: 40px;
