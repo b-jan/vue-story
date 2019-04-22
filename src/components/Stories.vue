@@ -145,7 +145,7 @@ export default {
     },
     storiesLength() {
       return this.stories.map(storyData => {
-        return storyData.content.story.length
+        return this.storyMedia(storyData).length
       })
     },
     isMediaAlphaActive() {
@@ -253,7 +253,8 @@ export default {
   },
   methods: {
     storyMedia(storyData) {
-      return storyData.content.story
+      return storyData.content.story.filter(story =>
+        story.type === 'image' || (story.type === 'video' && story.duration !== 0))
     },
     setStoryLatestMedia(index) {
       this.storiesLatestMediaIndex[this.activeStoryIndex] = this.activeMediaIndex
