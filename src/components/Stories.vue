@@ -77,20 +77,10 @@
           :active-media-index="activeMediaIndex"
           :video-current-time="mediaBetaCurrentTime"
         />
-
-        <div
+        <Branding
+          :story-data="storyData"
           class="stories-container__branding-container"
-        >
-          <img
-            :src="storyData.content.logo_top_left_img"
-            class="branding-container__logo"
-          >
-          <p
-            class="branding-container__brand"
-          >
-            {{ storyData.content.logo_top_left_title }}
-          </p>
-        </div>
+        />
       </Slide>
     </Carousel>
   </div>
@@ -102,6 +92,7 @@ import { Carousel, Slide } from 'vue-carousel'
 import Media from './Media.vue'
 import MediaPreview from './MediaPreview.vue'
 import Navigation from './Navigation.vue'
+import Branding from './Branding.vue'
 
 export default {
   name: 'Stories',
@@ -110,7 +101,8 @@ export default {
     Slide,
     Media,
     MediaPreview,
-    Navigation
+    Navigation,
+    Branding
   },
   props: {
     stories: {
@@ -334,21 +326,6 @@ export default {
     top: 0;
     left: 0;
     margin: 24px 0 0 16px;
-
-    .branding-container {
-      &__logo {
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
-        margin-right: 8px;
-      }
-
-      &__brand {
-        color: white;
-        font-weight: bold;
-        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
-      }
-    }
   }
 }
 
