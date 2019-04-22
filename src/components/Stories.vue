@@ -286,6 +286,8 @@ export default {
       }
     },
     goToPreviousMedia() {
+      this.mediaCurrentTime = 0
+
       // When first media, go on previous story, on the latest media
       if (this.activeMediaIndex === 0 && this.activeStoryIndex > 0) {
         this.changeStory(this.activeStoryIndex - 1)
@@ -297,6 +299,8 @@ export default {
       }
     },
     goToNextMedia() {
+      this.mediaCurrentTime = 0
+
       // When last media, go on next story, on the latest media
       if (
         this.activeMediaIndex === this.storiesLength[this.activeStoryIndex] - 1 &&
