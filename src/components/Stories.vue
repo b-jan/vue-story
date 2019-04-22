@@ -43,6 +43,7 @@
             v-if="mediaAlpha"
             :media="mediaAlpha"
             :active="isMediaAlphaActive"
+            :is-sound-active="isMediaAlphaActive && isSoundActive"
             :style="{zIndex: isMediaAlphaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
@@ -52,6 +53,7 @@
             v-if="mediaBeta"
             :media="mediaBeta"
             :active="isMediaBetaActive"
+            :is-sound-active="isMediaBetaActive && isSoundActive"
             :style="{zIndex: isMediaBetaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
@@ -61,6 +63,7 @@
             v-if="mediaGamma"
             :media="mediaGamma"
             :active="isMediaGammaActive"
+            :is-sound-active="isMediaGammaActive && isSoundActive"
             :style="{zIndex: isMediaGammaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
@@ -93,6 +96,8 @@
         <Branding
           :story-data="storyData"
           class="stories-container__branding-container"
+          :has-sound="isSoundActive"
+          @toggle-sound="toggleSound"
         />
       </Slide>
     </Carousel>
@@ -135,7 +140,8 @@ export default {
       mediaBetaIndex: 0,
       mediaGammaIndex: 1,
 
-      mediaCurrentTime: 0
+      mediaCurrentTime: 0,
+      isSoundActive: false
     }
   },
   computed: {
@@ -306,6 +312,9 @@ export default {
     },
     updateCurrentTime(time) {
       this[`mediaCurrentTime`] = time
+    },
+    toggleSound() {
+      this.isSoundActive = !this.isSoundActive
     }
   }
 }
@@ -342,7 +351,7 @@ export default {
     z-index: 4;
     top: 0;
     left: 0;
-    margin: 24px 0 0 16px;
+    margin: 24px 0 0 8px;
   }
 }
 

@@ -40,9 +40,9 @@ export default {
       type: Boolean,
       default: false
     },
-    position: {
-      type: String,
-      default: ''
+    isSoundActive: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -64,6 +64,12 @@ export default {
       }
       if (!newValue) {
         video.pause()
+      }
+    },
+    isSoundActive(newIsSoundActive) {
+      const video = this.$refs.video
+      if (video.muted != !newIsSoundActive) {
+        video.muted = !newIsSoundActive
       }
     }
   },

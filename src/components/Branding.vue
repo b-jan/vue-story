@@ -9,6 +9,11 @@
     >
       {{ storyData.content.logo_top_left_title }}
     </p>
+    <img
+      :src="soundIcon"
+      class="branding-container__sound-icon"
+      @click="toggleSound"
+    >
   </div>
 </template>
 
@@ -21,8 +26,22 @@
         default: function() {
           return {}
         }
+      },
+      hasSound: {
+        type: Boolean,
+        default: false
       }
-    }
+    },
+    computed: {
+      soundIcon() {
+        return this.hasSound ? require('../assets/sound-on.svg') : require('../assets/sound-off.svg')
+      }
+    },
+    methods: {
+      toggleSound() {
+        this.$emit('toggle-sound')
+      }
+    },
   }
 </script>
 
@@ -41,7 +60,13 @@
   &__brand {
     color: white;
     font-weight: bold;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-right: 24px;
+  }
+
+  &__sound-icon {
+    height: 20px;
+    width: 20px;
   }
 }
 </style>
