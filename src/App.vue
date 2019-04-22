@@ -11,12 +11,6 @@ export default {
   name: 'App',
   components: {
     Clipr
-  },
-  mounted() {
-
-  },
-  methods: {
-    
   }
 }
 </script>
