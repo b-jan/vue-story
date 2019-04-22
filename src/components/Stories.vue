@@ -40,7 +40,7 @@
             :style="{zIndex: isMediaAlphaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
-            @update-current-time="updateCurrentTime"
+            @update-current-time="(time) => updateCurrentTime(time)"
           />
           <Media
             v-if="mediaBeta"
@@ -49,7 +49,7 @@
             :style="{zIndex: isMediaBetaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
-            @update-current-time="updateCurrentTime"
+            @update-current-time="(time) => updateCurrentTime(time)"
           />
           <Media
             v-if="mediaGamma"
@@ -58,7 +58,7 @@
             :style="{zIndex: isMediaGammaActive ? 2 : 1}"
             class="stories-container__media-container"
             @end-video="goToNextMedia"
-            @update-current-time="updateCurrentTime"
+            @update-current-time="(time) => updateCurrentTime(time)"
           />
         </div>
         <!-- <MediaPreview
@@ -66,30 +66,18 @@
           :media="nextMedia"
           class="stories-container__media-container"
         /> -->
-        <nav
-          class="navigation-container"
-          :style="{ gridTemplateColumns: 'repeat(' + storiesLength[index] + ', 1fr)'}"
-        >
-          <div
-            v-for="(story, storyIndex) in storyMedia(storyData)"
-            :key="story.thumbnail + storyIndex"
-            class="navigation"
-          >
-            <div
-              :class="storyIndex < activeMediaIndex ? 'navigation__have-watched' : 'navigation__will-watch'"
-            />
-            <div
-              v-if="storyIndex === activeMediaIndex"
-              :class="'navigation__is-watching'"
-              :style="{ width: videoCurrentTime + '%'}"
-            />
-          </div>
-        </nav>
         <MediaPreview
           v-if="index === activeStoryIndex + 1"
           :media="nextStoryLatestMedia"
           class="stories-container__media-container"
         />
+        <Navigation
+          :story-length="storiesLength[index]"
+          :story-media="storyMedia(storyData)"
+          :active-media-index="activeMediaIndex"
+          :video-current-time="mediaBetaCurrentTime"
+        />
+
         <div
           class="stories-container__branding-container"
         >
@@ -113,6 +101,7 @@ import Spinner from './Spinner.vue'
 import { Carousel, Slide } from 'vue-carousel'
 import Media from './Media.vue'
 import MediaPreview from './MediaPreview.vue'
+import Navigation from './Navigation.vue'
 
 export default {
   name: 'Stories',
@@ -120,7 +109,8 @@ export default {
     Carousel,
     Slide,
     Media,
-    MediaPreview
+    MediaPreview,
+    Navigation
   },
   props: {
     stories: {
@@ -140,7 +130,9 @@ export default {
       mediaBetaIndex: 0,
       mediaGammaIndex: 1,
 
-      videoCurrentTime: 0
+      mediaAlphaCurrentTime: 0,
+      mediaBetaCurrentTime: 0,
+      mediaGammaCurrentTime: 0
     }
   },
   computed: {
@@ -308,8 +300,8 @@ export default {
         this.activeMediaIndex += 1
       }
     },
-    updateCurrentTime(time) {
-      this.videoCurrentTime = time
+    updateCurrentTime(time, position) {
+      this[`mediaBetaCurrentTime`] = time
     }
   }
 }
@@ -356,51 +348,6 @@ export default {
         font-weight: bold;
         font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
       }
-    }
-  }
-}
-
-.navigation-container {
-  position: fixed;
-  z-index: 1;
-  box-sizing: border-box;
-  display: grid;
-  grid-column-gap: 2px;
-  padding: 0 16px;
-  top: 16px;
-  width: 100%;
-
-  .navigation {
-    border-radius: 4px;
-    height: 4px;
-    position: relative;
-    width: 100%;
-
-    &__will-watch {
-      background: rgba(255, 255, 255, 0.35);
-      position: absolute;
-      border-radius: 4px;
-      height: 4px;
-      width: 100%;
-    }
-
-    &__have-watched {
-      background: white;
-      position: absolute;
-      border-radius: 4px;
-      height: 4px;
-      width: 100%;
-    }
-
-    &__is-watching {
-      background: white;
-      position: absolute;
-      border-radius: 4px;
-      height: 4px;
-      -webkit-transition: width .1s linear;
-      transition: width .1s linear;
-      width: auto;
-      will-change: width;
     }
   }
 }
