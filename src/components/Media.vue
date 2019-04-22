@@ -58,12 +58,12 @@ export default {
       if (!this.$refs.video) return
 
       const video = this.$refs.video
-      if (!newValue) {
-        video.pause()
-      }
       if (newValue) {
         video.currentTime = 0
         video.play()
+      }
+      if (!newValue) {
+        video.pause()
       }
     }
   },
@@ -72,6 +72,8 @@ export default {
       if (!this.$refs.video) return
 
       const video = this.$refs.video
+      if (this.active) this.$emit('update-current-time', 100 * video.currentTime / video.duration)
+
       if (!video.duration || video.currentTime < video.duration) return
 
       this.$emit('end-video')
