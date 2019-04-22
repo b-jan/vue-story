@@ -16,22 +16,12 @@
         v-for="(storyData, index) in stories"
         :key="storyData.header_title + index"
       >
-        <MediaPreview
-          v-if="index === activeStoryIndex - 1"
-          :media="previousStoryLatestMedia"
-          class="stories-container__media-container"
-        />
-        <Navigation
+        <StoryPreview
           v-if="index === activeStoryIndex - 1"
           :story-length="storiesLength[activeStoryIndex - 1]"
-          :active-media-index="storiesLatestMediaIndex[activeStoryIndex - 1]"
-          class="stories-container__navigation-container"
+          :media-index="storiesLatestMediaIndex[activeStoryIndex - 1]"
+          :media="previousStoryLatestMedia"
         />
-        <!-- <MediaPreview
-          v-if="index === activeStoryIndex && activeMediaIndex > 0"
-          :media="previousMedia"
-          class="stories-container__media-container"
-        /> -->
         <div
           v-if="index === activeStoryIndex"
           ref="media-container"
@@ -77,21 +67,11 @@
             class="stories-container__navigation-container"
           />
         </div>
-        <!-- <MediaPreview
-          v-if="index === activeStoryIndex && activeMediaIndex < storiesLength[activeStoryIndex] - 1"
-          :media="nextMedia"
-          class="stories-container__media-container"
-        /> -->
-        <MediaPreview
-          v-if="index === activeStoryIndex + 1"
-          :media="nextStoryLatestMedia"
-          class="stories-container__media-container"
-        />
-        <Navigation
+        <StoryPreview
           v-if="index === activeStoryIndex + 1"
           :story-length="storiesLength[activeStoryIndex + 1]"
-          :active-media-index="storiesLatestMediaIndex[activeStoryIndex + 1]"
-          class="stories-container__navigation-container"
+          :media-index="storiesLatestMediaIndex[activeStoryIndex + 1]"
+          :media="nextStoryLatestMedia"
         />
         <Branding
           :story-data="storyData"
@@ -108,9 +88,9 @@
 import Spinner from './Spinner.vue'
 import { Carousel, Slide } from 'vue-carousel'
 import Media from './Media.vue'
-import MediaPreview from './MediaPreview.vue'
 import Navigation from './Navigation.vue'
 import Branding from './Branding.vue'
+import StoryPreview from './StoryPreview.vue'
 
 export default {
   name: 'Stories',
@@ -118,9 +98,9 @@ export default {
     Carousel,
     Slide,
     Media,
-    MediaPreview,
     Navigation,
-    Branding
+    Branding,
+    StoryPreview
   },
   props: {
     stories: {

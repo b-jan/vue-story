@@ -58,12 +58,12 @@ export default {
       if (!this.$refs.video) return
 
       const video = this.$refs.video
+      if (!newValue) {
+        video.pause()
+      }
       if (newValue) {
         video.currentTime = 0
         video.play()
-      }
-      if (!newValue) {
-        video.pause()
       }
     },
     isSoundActive(newIsSoundActive) {
