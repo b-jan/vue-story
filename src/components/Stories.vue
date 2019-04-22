@@ -1,10 +1,5 @@
 <template>
   <div class="stories-container">
-    <!-- <keep-alive
-      v-if="!isCurrentMediaActive"
-    >
-      <Spinner />
-    </keep-alive> -->
     <Carousel
       :per-page="1"
       :value="activeStoryIndex"
@@ -21,6 +16,8 @@
           :story-length="storiesLength[activeStoryIndex - 1]"
           :media-index="storiesLatestMediaIndex[activeStoryIndex - 1]"
           :media="previousStoryLatestMedia"
+          :button-info="storyButtonInfo(storyData)"
+          class="stories-container__preview-container"
         />
         <div
           v-if="index === activeStoryIndex"
@@ -65,6 +62,11 @@
             :active-media-index="storiesLatestMediaIndex[activeStoryIndex]"
             :video-current-time="mediaCurrentTime"
             class="stories-container__navigation-container"
+            :button-info="storyButtonInfo(storyData)"
+          />
+          <RedirectionButton
+            :button-info="storyButtonInfo(storyData)"
+            class="stories-container__cta-container"
           />
         </div>
         <StoryPreview
@@ -72,6 +74,8 @@
           :story-length="storiesLength[activeStoryIndex + 1]"
           :media-index="storiesLatestMediaIndex[activeStoryIndex + 1]"
           :media="nextStoryLatestMedia"
+          :button-info="storyButtonInfo(storyData)"
+          class="stories-container__preview-container"
         />
         <Branding
           :story-data="storyData"
@@ -85,12 +89,12 @@
 </template>
 
 <script>
-import Spinner from './Spinner.vue'
 import { Carousel, Slide } from 'vue-carousel'
 import Media from './Media.vue'
 import Navigation from './Navigation.vue'
 import Branding from './Branding.vue'
 import StoryPreview from './StoryPreview.vue'
+import RedirectionButton from './RedirectionButton.vue'
 
 export default {
   name: 'Stories',
@@ -100,7 +104,8 @@ export default {
     Media,
     Navigation,
     Branding,
-    StoryPreview
+    StoryPreview,
+    RedirectionButton
   },
   props: {
     stories: {
@@ -241,6 +246,14 @@ export default {
       return storyData.content.story.filter(story =>
         story.type === 'image' || (story.type === 'video' && story.duration !== 0))
     },
+    storyButtonInfo(storyData) {
+      let buttonInfo = {}
+      buttonInfo.url = storyData.content.button_url
+      buttonInfo.color = storyData.content.button_color
+      buttonInfo.title = storyData.content.button_title
+      buttonInfo.aboveTitle = storyData.content.button_above_title
+      return buttonInfo
+    },
     setStoryLatestMedia(index) {
       this.storiesLatestMediaIndex[this.activeStoryIndex] = this.activeMediaIndex
     },
@@ -336,6 +349,20 @@ export default {
     top: 0;
     left: 0;
     margin: 24px 0 0 8px;
+  }
+
+  &__preview-container {
+    position: fixed;
+    z-index: 4;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__cta-container {
+    position: fixed;
+    z-index: 4;
+    bottom: 24px;
   }
 }
 

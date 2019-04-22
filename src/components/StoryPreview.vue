@@ -11,18 +11,24 @@
       :active-media-index="mediaIndex"
       class="story-container__navigation-container"
     />
+    <RedirectionButton
+      :button-info="buttonInfo"
+      class="story-container__cta-container"
+    />
   </div>
 </template>
 
 <script>
 import MediaPreview from './MediaPreview.vue'
 import Navigation from './Navigation.vue'
+import RedirectionButton from './RedirectionButton.vue'
 
   export default {
     name: 'StoryPreview',
     components: {
       MediaPreview,
-      Navigation
+      Navigation,
+      RedirectionButton
     },
     props: {
       storyLength: {
@@ -34,6 +40,12 @@ import Navigation from './Navigation.vue'
         default: 0
       },
       media: {
+        type: Object,
+        default: function() {
+          return {}
+        }
+      },
+      buttonInfo: {
         type: Object,
         default: function() {
           return {}
@@ -61,6 +73,12 @@ import Navigation from './Navigation.vue'
     z-index: 4;
     top: 16px;
     width: 100%;
+  }
+
+  &__cta-container {
+    position: fixed;
+    z-index: 4;
+    bottom: 24px;
   }
 }
 </style>
