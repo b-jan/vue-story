@@ -1,4 +1,4 @@
-# clipr
+# vue story
 
 ## Project setup
 ```
